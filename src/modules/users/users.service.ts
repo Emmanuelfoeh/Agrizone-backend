@@ -10,13 +10,20 @@ export class UsersService {
 
   async getById(id: string): Promise<UserResponseDto> {
     const user = await this.repo.findById(id);
-    if (!user) throw new AppException(ErrorCode.USER_NOT_FOUND, 'User not found', 404);
+    if (!user)
+      throw new AppException(ErrorCode.USER_NOT_FOUND, 'User not found', 404);
     return UserResponseDto.from(user);
   }
 
   async updateProfile(
     id: string,
-    data: { displayName?: string; email?: string; orgName?: string; defaultRegionCode?: string; preferredLocale?: 'EN' | 'TW' | 'EE' | 'DA' },
+    data: {
+      displayName?: string;
+      email?: string;
+      orgName?: string;
+      defaultRegionCode?: string;
+      preferredLocale?: 'EN' | 'TW' | 'EE' | 'DA';
+    },
   ): Promise<UserResponseDto> {
     const user = await this.repo.update(id, data);
     return UserResponseDto.from(user);
@@ -24,7 +31,7 @@ export class UsersService {
 
   async list(take = 50, skip = 0): Promise<UserResponseDto[]> {
     const users = await this.repo.list(take, skip);
-    return users.map(UserResponseDto.from);
+    return users.map((u) => UserResponseDto.from(u));
   }
 
   async grantRole(userId: string, role: Role): Promise<UserResponseDto> {
