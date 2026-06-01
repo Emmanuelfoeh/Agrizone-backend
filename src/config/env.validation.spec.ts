@@ -6,6 +6,8 @@ describe('validateEnv', () => {
     PORT: '3001',
     DATABASE_URL: 'postgresql://agrizone:agrizone@localhost:5432/agrizone',
     REDIS_URL: 'redis://localhost:6379',
+    JWT_SECRET: 'test-secret-at-least-16-chars-long',
+    PII_ENCRYPTION_KEY: 'test-pii-key',
   };
 
   it('passes with valid env and coerces PORT to a number', () => {
