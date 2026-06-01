@@ -47,8 +47,8 @@ every mutation audited. Phase 0 defers escrow/payments (interface-only) and in-p
 
 | Step | Plan file | Spec §8 modules | Status |
 |---|---|---|---|
-| 1 | `2026-06-01-step-1-foundation.md` | Config, Common/Prisma, Health, logging, Sentry, Swagger, CI | **Written** |
-| 2 | `2026-06-01-step-2-identity.md` | Users, Auth (OTP/JWT), Audit, guards/decorators | Pending |
+| 1 | `2026-06-01-step-1-foundation.md` | Config, Common/Prisma, Health, logging, Sentry, Swagger, CI | **Done — merged to main** |
+| 2 | `2026-06-01-step-2-identity.md` | Users, Auth (OTP/JWT), Audit, guards/decorators | **Written — in progress** |
 | 3 | `2026-06-01-step-3-kyc-verification.md` | Kyc (NIA), Verification, VerificationEvent | Pending |
 | 4 | `2026-06-01-step-4-marketplace-core.md` | Listings, Files, Search, Inquiries, Messaging | Pending |
 | 5 | `2026-06-01-step-5-transactions-ledger.md` | Transactions, Ledger, Commissions, Escrow/Payments (iface), Activity | Pending |
