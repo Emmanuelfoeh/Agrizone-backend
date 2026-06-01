@@ -14,7 +14,9 @@ describe('Health (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     app.setGlobalPrefix('v1');
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+    app.useGlobalPipes(
+      new ValidationPipe({ whitelist: true, transform: true }),
+    );
     app.useGlobalFilters(new AllExceptionsFilter());
     await app.init();
   });
@@ -24,7 +26,9 @@ describe('Health (e2e)', () => {
   });
 
   it('GET /v1/health -> 200 ok', async () => {
-    const res = await request(app.getHttpServer()).get('/v1/health').expect(200);
+    const res = await request(app.getHttpServer())
+      .get('/v1/health')
+      .expect(200);
     expect(res.body.status).toBe('ok');
   });
 });
