@@ -22,7 +22,11 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
           process.env.NODE_ENV === 'development'
             ? { target: 'pino-pretty' }
             : undefined,
-        redact: ['req.headers.authorization', 'req.headers.cookie'],
+        redact: [
+          'req.headers.authorization',
+          'req.headers.cookie',
+          'res.headers["set-cookie"]',
+        ],
 
         customProps: (req: any) => ({
           correlationId: (req as { correlationId?: string }).correlationId,
