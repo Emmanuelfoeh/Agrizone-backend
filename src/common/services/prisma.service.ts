@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 // deletedAt: null unless a query explicitly passes deletedAt. Append-only tables
 // (LedgerEntry, AuditLog) are NOT listed here. Models are added as later steps
 // introduce them.
-const SOFT_DELETE_MODELS = new Set<string>([]);
+const SOFT_DELETE_MODELS = new Set<string>(['User', 'UserRole']);
 
 // Local interface for the $allOperations callback parameters.
 // We use an explicit shape here and cast the callback below because Prisma

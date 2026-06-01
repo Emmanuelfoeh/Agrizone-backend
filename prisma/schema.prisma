@@ -34,3 +34,66 @@ enum Currency {
   GBP
   EUR
 }
+
+enum Role {
+  FARMER
+  BUYER
+  AGGREGATOR
+  INPUT_SUPPLIER
+  INVESTOR
+  FIELD_AGENT
+  REGIONAL_SUPERVISOR
+  AGRONOMIST
+  TREASURY_OFFICER
+  COMPLIANCE_OFFICER
+  TRUST_REVIEWER
+  ADMIN
+}
+
+model User {
+  id                       String           @id @default(cuid())
+  phone                    String           @unique
+  email                    String?          @unique
+  displayName              String
+  orgName                  String?
+  preferredLocale          Locale           @default(EN)
+  defaultRegionCode        String?
+  verificationTier         VerificationTier @default(T0)
+  status                   UserStatus       @default(ACTIVE)
+  encryptedGhanaCardNumber String?
+  encryptedFullName        String?
+  roles                    UserRole[]
+  createdAt                DateTime         @default(now())
+  updatedAt                DateTime         @updatedAt
+  deletedAt                DateTime?
+
+  @@index([phone])
+  @@index([verificationTier])
+}
+
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  role      Role
+  createdAt DateTime @default(now())
+
+  @@unique([userId, role])
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  actorUserId   String?
+  action        String
+  entityType    String
+  entityId      String?
+  ip            String?
+  userAgent     String?
+  correlationId String?
+  before        Json?
+  after         Json?
+  createdAt     DateTime @default(now())
+
+  @@index([actorUserId])
+  @@index([entityType, entityId])
+}
