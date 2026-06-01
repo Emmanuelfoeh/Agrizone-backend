@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { UsersService } from './users.service';
@@ -23,7 +33,10 @@ export class UsersController {
 
   @Patch('me')
   @UseGuards(JwtAuthGuard)
-  updateMe(@CurrentUser() user: AuthenticatedUser, @Body() dto: UpdateProfileDto) {
+  updateMe(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpdateProfileDto,
+  ) {
     return this.users.updateProfile(user.id, dto);
   }
 

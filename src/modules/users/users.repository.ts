@@ -6,24 +6,44 @@ import { PrismaService } from '../../common/services/prisma.service';
 export class UsersRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  findByPhone(phone: string): Promise<(User & { roles: { role: Role }[] }) | null> {
-    return this.prisma.db.user.findFirst({ where: { phone }, include: { roles: true } });
+  findByPhone(
+    phone: string,
+  ): Promise<(User & { roles: { role: Role }[] }) | null> {
+    return this.prisma.db.user.findFirst({
+      where: { phone },
+      include: { roles: true },
+    });
   }
 
   findById(id: string): Promise<(User & { roles: { role: Role }[] }) | null> {
-    return this.prisma.db.user.findFirst({ where: { id }, include: { roles: true } });
+    return this.prisma.db.user.findFirst({
+      where: { id },
+      include: { roles: true },
+    });
   }
 
-  create(data: Prisma.UserCreateInput): Promise<User & { roles: { role: Role }[] }> {
+  create(
+    data: Prisma.UserCreateInput,
+  ): Promise<User & { roles: { role: Role }[] }> {
     return this.prisma.user.create({ data, include: { roles: true } });
   }
 
-  update(id: string, data: Prisma.UserUpdateInput): Promise<User & { roles: { role: Role }[] }> {
-    return this.prisma.user.update({ where: { id }, data, include: { roles: true } });
+  update(
+    id: string,
+    data: Prisma.UserUpdateInput,
+  ): Promise<User & { roles: { role: Role }[] }> {
+    return this.prisma.user.update({
+      where: { id },
+      data,
+      include: { roles: true },
+    });
   }
 
   setTier(id: string, tier: VerificationTier): Promise<User> {
-    return this.prisma.user.update({ where: { id }, data: { verificationTier: tier } });
+    return this.prisma.user.update({
+      where: { id },
+      data: { verificationTier: tier },
+    });
   }
 
   addRole(userId: string, role: Role) {
@@ -39,6 +59,11 @@ export class UsersRepository {
   }
 
   list(take: number, skip: number) {
-    return this.prisma.db.user.findMany({ take, skip, orderBy: { createdAt: 'desc' }, include: { roles: true } });
+    return this.prisma.db.user.findMany({
+      take,
+      skip,
+      orderBy: { createdAt: 'desc' },
+      include: { roles: true },
+    });
   }
 }

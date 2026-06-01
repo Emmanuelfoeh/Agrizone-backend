@@ -8,7 +8,8 @@ import { AuthenticatedUser } from '../../common/types/authenticated-user';
 import { AccessClaims } from './token.service';
 
 function fromCookie(req: Request): string | null {
-  const cookies = (req as Request & { cookies?: Record<string, string> }).cookies;
+  const cookies = (req as Request & { cookies?: Record<string, string> })
+    .cookies;
   return cookies?.az_access ?? null;
 }
 
@@ -19,7 +20,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     private readonly users: UsersRepository,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([fromCookie, ExtractJwt.fromAuthHeaderAsBearerToken()]),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        fromCookie,
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       secretOrKey: config.get<string>('JWT_SECRET')!,
       ignoreExpiration: false,
     });

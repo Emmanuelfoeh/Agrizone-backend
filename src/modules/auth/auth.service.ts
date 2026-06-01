@@ -42,7 +42,10 @@ export class AuthService {
     return { sent: true, ...(isProd ? {} : { debugCode: code }) };
   }
 
-  async verifyOtp(phone: string, code: string): Promise<TokenPair & { tier: VerificationTier }> {
+  async verifyOtp(
+    phone: string,
+    code: string,
+  ): Promise<TokenPair & { tier: VerificationTier }> {
     await this.otp.verify(phone, code);
     let user = await this.users.findByPhone(phone);
     if (!user) {
@@ -58,7 +61,15 @@ export class AuthService {
         entityId: user.id,
         after: { tier: 'T1', method: 'PHONE_OTP' },
       });
-      this.events.emit('verification.tier-changed', new TierChangedEvent(user.id, VerificationTier.T0, VerificationTier.T1, 'PHONE_OTP'));
+      this.events.emit(
+        'verification.tier-changed',
+        new TierChangedEvent(
+          user.id,
+          VerificationTier.T0,
+          VerificationTier.T1,
+          'PHONE_OTP',
+        ),
+      );
     }
     const pair = await this.tokens.issue({
       sub: user.id,
@@ -69,10 +80,14 @@ export class AuthService {
     return { ...pair, tier: user.verificationTier };
   }
 
-  async refresh(refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> {
-    const { userId, refreshToken: next } = await this.tokens.rotate(refreshToken);
+  async refresh(
+    refreshToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const { userId, refreshToken: next } =
+      await this.tokens.rotate(refreshToken);
     const user = await this.users.findById(userId);
-    if (!user) throw new AppException(ErrorCode.REFRESH_INVALID, 'Unknown user', 401);
+    if (!user)
+      throw new AppException(ErrorCode.REFRESH_INVALID, 'Unknown user', 401);
     const accessToken = await this.tokens.signAccess({
       sub: user.id,
       phone: user.phone,

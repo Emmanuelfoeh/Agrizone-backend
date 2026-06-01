@@ -16,7 +16,11 @@ export class OtpService {
   async generate(phone: string): Promise<string> {
     const throttleKey = `otp:throttle:${phone}`;
     if (await this.redis.client.get(throttleKey)) {
-      throw new AppException(ErrorCode.OTP_THROTTLED, 'Please wait before requesting another code', 429);
+      throw new AppException(
+        ErrorCode.OTP_THROTTLED,
+        'Please wait before requesting another code',
+        429,
+      );
     }
     const len = this.config.get<number>('OTP_LENGTH')!;
     const ttl = this.config.get<number>('OTP_TTL_SECONDS')!;
@@ -34,7 +38,12 @@ export class OtpService {
   async verify(phone: string, code: string): Promise<void> {
     const key = `otp:${phone}`;
     const stored = await this.redis.client.get(key);
-    if (!stored) throw new AppException(ErrorCode.OTP_EXPIRED, 'Code expired or not requested', 400);
+    if (!stored)
+      throw new AppException(
+        ErrorCode.OTP_EXPIRED,
+        'Code expired or not requested',
+        400,
+      );
 
     const max = this.config.get<number>('OTP_MAX_ATTEMPTS')!;
     const attempts = await this.redis.client.incr(`otp:attempts:${phone}`);

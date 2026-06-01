@@ -20,7 +20,9 @@ import { AuditModule } from '../audit/audit.module';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({ secret: config.get<string>('JWT_SECRET') }),
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
+      }),
     }),
   ],
   controllers: [AuthController],

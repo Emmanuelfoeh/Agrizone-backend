@@ -58,19 +58,32 @@ export class TokenService {
   }
 
   /** Validate + rotate a refresh token; returns the userId and a fresh refresh token. */
-  async rotate(refreshToken: string): Promise<{ userId: string; refreshToken: string }> {
+  async rotate(
+    refreshToken: string,
+  ): Promise<{ userId: string; refreshToken: string }> {
     const sep = refreshToken.indexOf(':');
     const dot = refreshToken.indexOf('.');
     if (sep < 0 || dot < 0 || dot < sep) {
-      throw new AppException(ErrorCode.REFRESH_INVALID, 'Malformed refresh token', 401);
+      throw new AppException(
+        ErrorCode.REFRESH_INVALID,
+        'Malformed refresh token',
+        401,
+      );
     }
     const userId = refreshToken.slice(0, sep);
     const jti = refreshToken.slice(sep + 1, dot);
     const secret = refreshToken.slice(dot + 1);
     const key = `refresh:${userId}:${jti}`;
     const stored = await this.redis.client.get(key);
-    if (!stored || stored !== hmac(secret, this.config.get<string>('JWT_SECRET')!)) {
-      throw new AppException(ErrorCode.REFRESH_INVALID, 'Invalid refresh token', 401);
+    if (
+      !stored ||
+      stored !== hmac(secret, this.config.get<string>('JWT_SECRET')!)
+    ) {
+      throw new AppException(
+        ErrorCode.REFRESH_INVALID,
+        'Invalid refresh token',
+        401,
+      );
     }
     await this.redis.client.del(key); // rotate: invalidate old
     const next = await this.newRefreshToken(userId);

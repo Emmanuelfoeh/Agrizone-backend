@@ -9,7 +9,8 @@ export class UserResponseDto {
   @ApiProperty({ nullable: true }) orgName!: string | null;
   @ApiProperty() preferredLocale!: string;
   @ApiProperty({ nullable: true }) defaultRegionCode!: string | null;
-  @ApiProperty({ enum: ['T0', 'T1', 'T2', 'T3', 'T4'] }) verificationTier!: VerificationTier;
+  @ApiProperty({ enum: ['T0', 'T1', 'T2', 'T3', 'T4'] })
+  verificationTier!: VerificationTier;
   @ApiProperty() status!: UserStatus;
   @ApiProperty({ isArray: true }) roles!: Role[];
   @ApiProperty() createdAt!: string;

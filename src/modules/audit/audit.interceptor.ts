@@ -1,4 +1,9 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+} from '@nestjs/common';
 import { Observable, tap } from 'rxjs';
 import { Request } from 'express';
 import { AuditService } from './audit.service';
@@ -11,7 +16,11 @@ export class AuditInterceptor implements NestInterceptor {
   constructor(private readonly audit: AuditService) {}
 
   intercept(ctx: ExecutionContext, next: CallHandler): Observable<unknown> {
-    const req = ctx.switchToHttp().getRequest<Request & { user?: AuthenticatedUser; correlationId?: string }>();
+    const req = ctx
+      .switchToHttp()
+      .getRequest<
+        Request & { user?: AuthenticatedUser; correlationId?: string }
+      >();
     if (!MUTATING.has(req.method)) return next.handle();
 
     return next.handle().pipe(

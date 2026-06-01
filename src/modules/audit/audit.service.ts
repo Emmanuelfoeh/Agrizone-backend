@@ -31,11 +31,20 @@ export class AuditService {
         ip: rec.ip ?? null,
         userAgent: rec.userAgent ?? null,
         correlationId: rec.correlationId ?? null,
-        before: rec.before === undefined ? Prisma.JsonNull : (rec.before as Prisma.InputJsonValue),
-        after: rec.after === undefined ? Prisma.JsonNull : (rec.after as Prisma.InputJsonValue),
+        before:
+          rec.before === undefined
+            ? Prisma.JsonNull
+            : (rec.before as Prisma.InputJsonValue),
+        after:
+          rec.after === undefined
+            ? Prisma.JsonNull
+            : (rec.after as Prisma.InputJsonValue),
       });
     } catch (err) {
-      this.logger.error(`Failed to write audit log for ${rec.action}`, err as Error);
+      this.logger.error(
+        `Failed to write audit log for ${rec.action}`,
+        err as Error,
+      );
     }
   }
 }
