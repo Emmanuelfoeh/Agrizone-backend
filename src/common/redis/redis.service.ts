@@ -7,7 +7,9 @@ export class RedisService implements OnModuleDestroy {
   readonly client: Redis;
 
   constructor(config: ConfigService) {
-    this.client = new Redis(config.get<string>('REDIS_URL')!, { maxRetriesPerRequest: null });
+    this.client = new Redis(config.get<string>('REDIS_URL')!, {
+      maxRetriesPerRequest: null,
+    });
   }
 
   onModuleDestroy(): void {

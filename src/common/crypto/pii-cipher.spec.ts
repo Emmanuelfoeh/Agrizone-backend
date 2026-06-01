@@ -16,6 +16,8 @@ describe('PiiCipher', () => {
   });
 
   it('rejects a key that is not 32 bytes', () => {
-    expect(() => new PiiCipher(Buffer.from('short').toString('base64'))).toThrow();
+    expect(
+      () => new PiiCipher(Buffer.from('short').toString('base64')),
+    ).toThrow();
   });
 });

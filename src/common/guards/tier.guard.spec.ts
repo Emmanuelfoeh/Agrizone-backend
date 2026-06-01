@@ -13,15 +13,27 @@ function ctxWith(user: unknown): ExecutionContext {
 
 describe('TierGuard', () => {
   it('allows when no tier required', () => {
-    const reflector = { getAllAndOverride: () => undefined } as unknown as Reflector;
-    expect(new TierGuard(reflector).canActivate(ctxWith({ verificationTier: 'T0' }))).toBe(true);
+    const reflector = {
+      getAllAndOverride: () => undefined,
+    } as unknown as Reflector;
+    expect(
+      new TierGuard(reflector).canActivate(ctxWith({ verificationTier: 'T0' })),
+    ).toBe(true);
   });
   it('allows when tier is sufficient', () => {
-    const reflector = { getAllAndOverride: () => VerificationTier.T1 } as unknown as Reflector;
-    expect(new TierGuard(reflector).canActivate(ctxWith({ verificationTier: 'T2' }))).toBe(true);
+    const reflector = {
+      getAllAndOverride: () => VerificationTier.T1,
+    } as unknown as Reflector;
+    expect(
+      new TierGuard(reflector).canActivate(ctxWith({ verificationTier: 'T2' })),
+    ).toBe(true);
   });
   it('denies (TIER_TOO_LOW) when tier is insufficient', () => {
-    const reflector = { getAllAndOverride: () => VerificationTier.T2 } as unknown as Reflector;
-    expect(() => new TierGuard(reflector).canActivate(ctxWith({ verificationTier: 'T1' }))).toThrow();
+    const reflector = {
+      getAllAndOverride: () => VerificationTier.T2,
+    } as unknown as Reflector;
+    expect(() =>
+      new TierGuard(reflector).canActivate(ctxWith({ verificationTier: 'T1' })),
+    ).toThrow();
   });
 });

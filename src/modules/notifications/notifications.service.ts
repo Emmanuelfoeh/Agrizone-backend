@@ -6,7 +6,9 @@ import { SendSmsParams } from '../../integrations/hubtel/hubtel.service';
 
 @Injectable()
 export class NotificationsService {
-  constructor(@InjectQueue(QUEUES.NOTIFICATIONS) private readonly queue: Queue) {}
+  constructor(
+    @InjectQueue(QUEUES.NOTIFICATIONS) private readonly queue: Queue,
+  ) {}
 
   async sendSms(params: SendSmsParams): Promise<void> {
     await this.queue.add('send-sms', params, {

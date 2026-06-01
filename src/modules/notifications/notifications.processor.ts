@@ -1,7 +1,10 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { QUEUES } from '../../workers/queue-names';
-import { HubtelService, SendSmsParams } from '../../integrations/hubtel/hubtel.service';
+import {
+  HubtelService,
+  SendSmsParams,
+} from '../../integrations/hubtel/hubtel.service';
 
 @Processor(QUEUES.NOTIFICATIONS)
 export class NotificationsProcessor extends WorkerHost {

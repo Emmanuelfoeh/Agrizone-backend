@@ -13,7 +13,9 @@ import { NotificationsProcessor } from './notifications.processor';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         const url = new URL(config.get<string>('REDIS_URL')!);
-        return { connection: { host: url.hostname, port: Number(url.port || 6379) } };
+        return {
+          connection: { host: url.hostname, port: Number(url.port || 6379) },
+        };
       },
     }),
     BullModule.registerQueue({ name: QUEUES.NOTIFICATIONS }),
