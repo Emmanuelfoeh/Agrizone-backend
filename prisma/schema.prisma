@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Locale {
+  EN
+  TW
+  EE
+  DA
+}
+
+enum VerificationTier {
+  T0
+  T1
+  T2
+  T3
+  T4
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+enum Currency {
+  GHS
+  USD
+  GBP
+  EUR
+}
