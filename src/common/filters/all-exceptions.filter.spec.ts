@@ -1,4 +1,11 @@
-import { ArgumentsHost, HttpStatus, NotFoundException } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  BadRequestException,
+  ForbiddenException,
+  HttpStatus,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AllExceptionsFilter } from './all-exceptions.filter';
 import { AppException, ErrorCode } from '../errors/error-codes';
 
@@ -64,6 +71,42 @@ describe('AllExceptionsFilter', () => {
     expect(m.status()).toBe(500);
     expect((m.payload() as { error: { code: string } }).error.code).toBe(
       'INTERNAL',
+    );
+  });
+
+  it('maps validation (array message) BadRequest to VALIDATION_FAILED with a string message', () => {
+    const m = mockHost();
+    filter.catch(
+      new BadRequestException({
+        message: ['name must be a string', 'age must be >= 1'],
+        error: 'Bad Request',
+        statusCode: 400,
+      }),
+      m.host,
+    );
+    expect(m.status()).toBe(400);
+    const body = m.payload() as { error: { code: string; message: string } };
+    expect(body.error.code).toBe('VALIDATION_FAILED');
+    expect(typeof body.error.message).toBe('string');
+    expect(body.error.message).toContain('name must be a string');
+    expect(body.error.message).toContain('age must be >= 1');
+  });
+
+  it('maps UnauthorizedException to UNAUTHORIZED', () => {
+    const m = mockHost();
+    filter.catch(new UnauthorizedException('nope'), m.host);
+    expect(m.status()).toBe(401);
+    expect((m.payload() as { error: { code: string } }).error.code).toBe(
+      'UNAUTHORIZED',
+    );
+  });
+
+  it('maps ForbiddenException to FORBIDDEN', () => {
+    const m = mockHost();
+    filter.catch(new ForbiddenException('no'), m.host);
+    expect(m.status()).toBe(403);
+    expect((m.payload() as { error: { code: string } }).error.code).toBe(
+      'FORBIDDEN',
     );
   });
 });

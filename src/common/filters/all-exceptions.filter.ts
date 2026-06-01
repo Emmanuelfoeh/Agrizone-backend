@@ -33,12 +33,21 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message = exception.message;
     } else if (exception instanceof HttpException) {
       status = exception.getStatus();
-      code = HttpStatus[status] ?? ErrorCode.INTERNAL; // e.g. NOT_FOUND
       const r = exception.getResponse();
-      message =
-        typeof r === 'string'
-          ? r
-          : ((r as { message?: string }).message ?? exception.message);
+      if (typeof r === 'object' && r !== null) {
+        const body = r as { message?: unknown };
+        if (Array.isArray(body.message)) {
+          code = ErrorCode.VALIDATION_FAILED;
+          message = (body.message as string[]).join('; ');
+        } else {
+          code = HttpStatus[status] ?? ErrorCode.INTERNAL;
+          message =
+            typeof body.message === 'string' ? body.message : exception.message;
+        }
+      } else {
+        code = HttpStatus[status] ?? ErrorCode.INTERNAL;
+        message = typeof r === 'string' ? r : exception.message;
+      }
     }
 
     res.status(status).json({ error: { code, message, correlationId } });
