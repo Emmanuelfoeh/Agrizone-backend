@@ -20,6 +20,12 @@ middleware stamps every request. Pino logs structured JSON. Health checks DB + R
 
 **Spec:** `docs/superpowers/specs/2026-06-01-agrizone-backend-phase0-design.md` §2, §3, §8.1–8.3.
 
+**Local datastores (this machine):** No Docker. Postgres runs natively (Homebrew Postgres 18,
+DB `agrizone_dev`, user `emmanuel`, no password) and Redis runs natively (Homebrew, `:6379`).
+`docker-compose.yml` is committed for CI/portability only — it is not run locally. Local
+`DATABASE_URL` = `postgresql://emmanuel@localhost:5432/agrizone_dev`; `REDIS_URL` =
+`redis://localhost:6379`.
+
 ---
 
 ## File structure produced by this plan
@@ -150,10 +156,18 @@ volumes:
   agrizone_redis:
 ```
 
-- [ ] **Step 2: Start the services**
+- [ ] **Step 2: Verify local datastores are reachable**
 
-Run: `pnpm db:up`
-Expected: `postgres` and `redis` containers report healthy (`docker compose ps`).
+This machine has no Docker; local dev uses **native Postgres + Redis** that are already running
+(Homebrew Postgres 18 on `:5432`, Redis on `:6379`). `docker-compose.yml` is committed only for
+CI parity and contributors who do have Docker — **do not** run it here.
+
+Run:
+```bash
+redis-cli ping
+psql -d agrizone_dev -tAc "select 1"
+```
+Expected: `PONG` and `1`. (DB `agrizone_dev` was created during setup via `createdb agrizone_dev`.)
 
 - [ ] **Step 3: Delete the scaffold endpoint files**
 
@@ -285,9 +299,16 @@ REDIS_URL=redis://localhost:6379
 SENTRY_DSN=
 ```
 
-Then copy it for local use:
+`.env.example` documents the portable (docker-compose) defaults. For **this machine's native
+datastores**, write `.env` with the local connection instead of copying:
 ```bash
-cp .env.example .env
+cat > .env <<'EOF'
+NODE_ENV=development
+PORT=3001
+DATABASE_URL=postgresql://emmanuel@localhost:5432/agrizone_dev
+REDIS_URL=redis://localhost:6379
+SENTRY_DSN=
+EOF
 ```
 
 - [ ] **Step 8: Commit**
@@ -437,7 +458,7 @@ describe('PrismaService', () => {
 });
 ```
 
-- [ ] **Step 6: Run it (requires `pnpm db:up` running)**
+- [ ] **Step 6: Run it (requires local Postgres running)**
 
 Run: `pnpm jest src/common/services/prisma.service.spec.ts`
 Expected: PASS.
@@ -856,7 +877,7 @@ describe('HealthController', () => {
 });
 ```
 
-> The redis indicator connects to local Redis in this test; ensure `pnpm db:up` is running.
+> The redis indicator connects to local Redis in this test; ensure Redis is running (`redis-cli ping`).
 > CI (Task 11) provisions Redis as a service.
 
 - [ ] **Step 2: Run it red**
@@ -1039,7 +1060,7 @@ Expected: success, `dist/` produced, no TS errors.
 
 - [ ] **Step 5: Boot and hit health + docs (manual smoke)**
 
-Run (in one shell, with `pnpm db:up` running): `pnpm start` then in another shell:
+Run (in one shell, with local Postgres + Redis running): `pnpm start` then in another shell:
 ```bash
 curl -s http://localhost:3001/v1/health
 ```
@@ -1101,7 +1122,7 @@ describe('Health (e2e)', () => {
 });
 ```
 
-- [ ] **Step 2: Run the e2e suite (requires `pnpm db:up`)**
+- [ ] **Step 2: Run the e2e suite (requires local Postgres + Redis)**
 
 Run: `pnpm test:e2e`
 Expected: PASS.
@@ -1172,7 +1193,7 @@ jobs:
 
 - [ ] **Step 2: Verify the same commands pass locally**
 
-Run, in order (with `pnpm db:up` running):
+Run, in order (with local Postgres + Redis running):
 ```bash
 pnpm prisma migrate deploy && pnpm lint && pnpm build && pnpm test && pnpm test:e2e
 ```
@@ -1189,7 +1210,7 @@ git commit -m "ci: lint, build, unit, e2e with postgres+redis services"
 
 ## Done-when (Step 1 acceptance)
 
-- `pnpm db:up` starts healthy Postgres + Redis.
+- Local Postgres (`agrizone_dev`) + Redis are reachable (`psql -d agrizone_dev`/`redis-cli ping`).
 - App boots on `:3001`; `GET /v1/health` returns `{status:"ok"}` (db + redis up); `/v1/docs`
   serves Swagger.
 - Missing required env crashes boot with a clear message.
