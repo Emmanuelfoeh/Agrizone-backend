@@ -18,8 +18,16 @@ describe('HealthController', () => {
             },
           },
         },
-        { provide: PrismaService, useValue: { $queryRawUnsafe: jest.fn().mockResolvedValue([{ '?column?': 1 }]) } },
-        { provide: ConfigService, useValue: { get: () => 'redis://localhost:6379' } },
+        {
+          provide: PrismaService,
+          useValue: {
+            $queryRawUnsafe: jest.fn().mockResolvedValue([{ '?column?': 1 }]),
+          },
+        },
+        {
+          provide: ConfigService,
+          useValue: { get: () => 'redis://localhost:6379' },
+        },
       ],
     }).compile();
 

@@ -17,7 +17,9 @@ interface RequestWithCorrelation {
 export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const http = host.switchToHttp();
-    const res = http.getResponse<{ status: (n: number) => { json: (b: unknown) => unknown } }>();
+    const res = http.getResponse<{
+      status: (n: number) => { json: (b: unknown) => unknown };
+    }>();
     const req = http.getRequest<RequestWithCorrelation>();
     const correlationId = req.correlationId ?? 'unknown';
 
@@ -33,7 +35,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
       status = exception.getStatus();
       code = HttpStatus[status] ?? ErrorCode.INTERNAL; // e.g. NOT_FOUND
       const r = exception.getResponse();
-      message = typeof r === 'string' ? r : ((r as { message?: string }).message ?? exception.message);
+      message =
+        typeof r === 'string'
+          ? r
+          : ((r as { message?: string }).message ?? exception.message);
     }
 
     res.status(status).json({ error: { code, message, correlationId } });

@@ -12,7 +12,11 @@ export enum ErrorCode {
 
 export class AppException extends HttpException {
   readonly code: ErrorCode;
-  constructor(code: ErrorCode, message: string, status: HttpStatus = HttpStatus.BAD_REQUEST) {
+  constructor(
+    code: ErrorCode,
+    message: string,
+    status: HttpStatus = HttpStatus.BAD_REQUEST,
+  ) {
     super(message, status);
     this.code = code;
   }

@@ -1,5 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
-import { HealthCheck, HealthCheckService, HealthCheckResult, HealthIndicatorResult } from '@nestjs/terminus';
+import {
+  HealthCheck,
+  HealthCheckService,
+  HealthCheckResult,
+  HealthIndicatorResult,
+} from '@nestjs/terminus';
 import { ApiTags } from '@nestjs/swagger';
 import { Redis } from 'ioredis';
 import { ConfigService } from '@nestjs/config';
@@ -17,10 +22,7 @@ export class HealthController {
   @Get()
   @HealthCheck()
   async check(): Promise<HealthCheckResult> {
-    return this.health.check([
-      () => this.checkDb(),
-      () => this.checkRedis(),
-    ]);
+    return this.health.check([() => this.checkDb(), () => this.checkRedis()]);
   }
 
   private async checkDb(): Promise<HealthIndicatorResult> {
@@ -30,7 +32,10 @@ export class HealthController {
 
   private async checkRedis(): Promise<HealthIndicatorResult> {
     const url = this.config.get<string>('REDIS_URL');
-    const client = new Redis(url!, { lazyConnect: true, maxRetriesPerRequest: 1 });
+    const client = new Redis(url!, {
+      lazyConnect: true,
+      maxRetriesPerRequest: 1,
+    });
     try {
       await client.connect();
       await client.ping();

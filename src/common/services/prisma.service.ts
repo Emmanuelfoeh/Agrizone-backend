@@ -26,8 +26,16 @@ function softDeleteExtension(client: PrismaClient) {
   // Cast is required because Prisma types $allModels/$allOperations as `never`
   // when the schema has no models. The runtime logic is correct and will work
   // transparently once models are added.
-  const allOperationsCb: AnyAllOperationsCb = async ({ model, operation, args, query }) => {
-    const isRead = operation === 'findFirst' || operation === 'findMany' || operation === 'findUnique';
+  const allOperationsCb: AnyAllOperationsCb = async ({
+    model,
+    operation,
+    args,
+    query,
+  }) => {
+    const isRead =
+      operation === 'findFirst' ||
+      operation === 'findMany' ||
+      operation === 'findUnique';
     if (model && SOFT_DELETE_MODELS.has(model) && isRead) {
       const a = (args ?? {}) as { where?: Record<string, unknown> };
       if (!a.where || !('deletedAt' in a.where)) {
@@ -41,7 +49,6 @@ function softDeleteExtension(client: PrismaClient) {
   return client.$extends({
     query: {
       $allModels: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         $allOperations: allOperationsCb as any,
       },
     },
@@ -49,7 +56,10 @@ function softDeleteExtension(client: PrismaClient) {
 }
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+export class PrismaService
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
   /** The soft-delete-extended client. Repositories use this. */
   readonly db: ReturnType<typeof softDeleteExtension>;
 

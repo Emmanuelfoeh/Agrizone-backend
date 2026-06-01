@@ -10,10 +10,15 @@ import { HealthModule } from './modules/health/health.module';
     ConfigModule,
     LoggerModule.forRoot({
       pinoHttp: {
-        transport: process.env.NODE_ENV === 'development' ? { target: 'pino-pretty' } : undefined,
+        transport:
+          process.env.NODE_ENV === 'development'
+            ? { target: 'pino-pretty' }
+            : undefined,
         redact: ['req.headers.authorization', 'req.headers.cookie'],
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        customProps: (req: any) => ({ correlationId: (req as { correlationId?: string }).correlationId }),
+
+        customProps: (req: any) => ({
+          correlationId: (req as { correlationId?: string }).correlationId,
+        }),
       },
     }),
     PrismaModule,

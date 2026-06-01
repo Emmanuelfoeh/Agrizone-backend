@@ -1,8 +1,13 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 
-interface Req { headers: Record<string, string | string[] | undefined>; correlationId?: string }
-interface Res { setHeader: (k: string, v: string) => void }
+interface Req {
+  headers: Record<string, string | string[] | undefined>;
+  correlationId?: string;
+}
+interface Res {
+  setHeader: (k: string, v: string) => void;
+}
 
 @Injectable()
 export class CorrelationIdMiddleware implements NestMiddleware {
